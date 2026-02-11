@@ -72,7 +72,7 @@ function App() {
                <Mono variant="label" className="border-signal text-signal bg-signal/5">System Active</Mono>
                <Mono variant="code" className="text-xs text-ink/40">V 1.1.0</Mono>
             </div>
-            <Display variant="giant">SUBS_TRACKER</Display>
+            <Display variant="giant">SUB_TRACKER</Display>
             <Body variant="lead" className="mt-4 max-w-xl">
               Centralized recurring expense monitoring system.
             </Body>
