@@ -11,12 +11,15 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.4.2",
+    "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "^0.475.0",
-    "framer-motion": "^12.4.2",
     "recharts": "^2.15.1",
-    "clsx": "^2.1.1",
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {

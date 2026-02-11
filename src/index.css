@@ -1,18 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap");
+@import "@fontsource/space-grotesk";
+@import "@fontsource/inter";
+@import "@fontsource/jetbrains-mono";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: "IBM Plex Sans", sans-serif;
-  color-scheme: dark;
+@layer base {
+  body {
+    @apply bg-paper text-ink font-body antialiased min-h-screen selection:bg-signal selection:text-white;
+  }
 }
 
-body {
-  @apply bg-[#0F172A] text-slate-100 min-h-screen antialiased;
-}
-
-.glass-card {
-  @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl;
+.technical-border {
+  @apply border border-structural;
 }
