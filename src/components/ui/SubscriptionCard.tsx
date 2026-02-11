@@ -66,8 +66,15 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
         {/* Right: Technical Data */}
         <div className="flex items-end md:items-center justify-between md:justify-end gap-2 md:gap-12 min-w-[300px]">
            <div className="text-right">
-              <Body variant="caption" className="block mb-1">Next Billing</Body>
-              <Mono variant="code" className="bg-transparent text-ink/70">{formatDate(nextPayment)}</Mono>
+              {nextPayment ? (
+                  <>
+                    <Body variant="caption" className="block mb-1">Next Billing</Body>
+                    <Mono variant="code" className="bg-transparent text-ink/70">{formatDate(nextPayment)}</Mono>
+                  </>
+              ) : (
+                  <Body variant="caption" className="block mb-1 text-ink/40">No Renewal</Body>
+              )}
+              
               {expirationDate && (
                 <div className="mt-2">
                    <Body variant="caption" className="block mb-1 text-ink/50">Expires</Body>

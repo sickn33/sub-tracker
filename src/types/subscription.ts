@@ -6,7 +6,7 @@ export interface Subscription {
   price: number;
   frequency: BillingFrequency;
   category: string;
-  nextRenewal: string;
+  nextRenewal?: string;
   expirationDate?: string;
 }
 
