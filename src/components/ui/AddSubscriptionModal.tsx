@@ -4,6 +4,8 @@ import { X, Check } from 'lucide-react';
 import type { Subscription, BillingFrequency } from '../../types/subscription';
 import { formatDate, parseDate, isValidDate } from '../../utils/date';
 
+import { DatePicker } from './DatePicker';
+
 interface AddSubscriptionModalProps {
   onAdd: (sub: Omit<Subscription, 'id'>) => void;
   onClose: () => void;
@@ -16,7 +18,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
     price: initialData?.price.toString() || '',
     frequency: (initialData?.frequency || 'monthly') as BillingFrequency,
     category: initialData?.category || '',
-    nextRenewal: initialData ? formatDate(initialData.nextRenewal) : formatDate(new Date().toISOString().split('T')[0]),
+    nextRenewal: initialData?.nextRenewal ? formatDate(initialData.nextRenewal) : '', // Optional renewal
     expirationDate: initialData?.expirationDate ? formatDate(initialData.expirationDate) : ''
   });
 
@@ -25,7 +27,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
     if (!formData.name || !formData.price) return;
 
     // Validate dates if present
-    if (!isValidDate(formData.nextRenewal)) {
+    if (formData.nextRenewal && !isValidDate(formData.nextRenewal)) {
       alert('Please enter a valid renewal date (DD/MM/YYYY)');
       return;
     }
@@ -39,11 +41,12 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
       price: parseFloat(formData.price),
       frequency: formData.frequency,
       category: formData.category,
-      nextRenewal: parseDate(formData.nextRenewal),
+      nextRenewal: formData.nextRenewal ? parseDate(formData.nextRenewal) : undefined,
       expirationDate: formData.expirationDate ? parseDate(formData.expirationDate) : undefined
     });
     onClose();
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/20 backdrop-blur-sm">
@@ -140,16 +143,12 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
 
                 <div className="space-y-2">
                      <label htmlFor="sub-renewal" className="block">
-                        <Body variant="caption" className="text-ink/60">Initial Renewal</Body>
+                        <Body variant="caption" className="text-ink/60">Initial Renewal (Optional)</Body>
                      </label>
-                     <input 
+                     <DatePicker 
                         id="sub-renewal"
-                        title="Initial Renewal Date"
-                        type="text"
-                        placeholder="DD/MM/YYYY"
-                        className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
                         value={formData.nextRenewal}
-                        onChange={e => setFormData({...formData, nextRenewal: e.target.value})}
+                        onChange={val => setFormData({...formData, nextRenewal: val})}
                      />
                 </div>
 
@@ -157,14 +156,10 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                      <label htmlFor="sub-expires" className="block">
                         <Body variant="caption" className="text-ink/60">Expiration Date (Optional)</Body>
                      </label>
-                     <input 
+                     <DatePicker 
                         id="sub-expires"
-                        title="Expiration Date"
-                        type="text"
-                        placeholder="DD/MM/YYYY"
-                        className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
                         value={formData.expirationDate}
-                        onChange={e => setFormData({...formData, expirationDate: e.target.value})}
+                        onChange={val => setFormData({...formData, expirationDate: val})}
                      />
                 </div>
 
