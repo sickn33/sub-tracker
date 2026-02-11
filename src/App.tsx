@@ -7,11 +7,24 @@ import { Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { storage } from './types/storage';
 import { calculateMonthlyTotal, type Subscription } from './types/subscription';
+import { calculateNextBillingDate } from './utils/billing';
 import './index.css';
 
 function App() {
-  // Initialize state lazily from storage to avoid useEffect sync issues
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => storage.loadSubscriptions());
+  /* Initialize state lazily from storage and apply Smart Rollover */
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => {
+    const loaded = storage.loadSubscriptions();
+    const today = new Date();
+    return loaded.map(sub => {
+      if (sub.nextRenewal) {
+        const next = calculateNextBillingDate(today, sub.nextRenewal, sub.frequency);
+        if (next !== sub.nextRenewal) {
+          return { ...sub, nextRenewal: next };
+        }
+      }
+      return sub;
+    });
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
 
