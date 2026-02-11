@@ -13,7 +13,8 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
     price: '',
     frequency: 'monthly' as BillingFrequency,
     category: 'Entertainment',
-    nextRenewal: new Date().toISOString().split('T')[0]
+    nextRenewal: new Date().toISOString().split('T')[0],
+    expirationDate: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,7 +26,8 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
       price: parseFloat(formData.price),
       frequency: formData.frequency,
       category: formData.category,
-      nextRenewal: formData.nextRenewal
+      nextRenewal: formData.nextRenewal,
+      expirationDate: formData.expirationDate || undefined
     });
     onClose();
   };
@@ -103,16 +105,29 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
             </select>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="renewalDate" className="text-sm font-medium text-slate-300">Next Renewal</label>
-            <input 
-              id="renewalDate"
-              title="Next Renewal Date"
-              type="date" 
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all [color-scheme:dark]"
-              value={formData.nextRenewal}
-              onChange={e => setFormData({ ...formData, nextRenewal: e.target.value })}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="renewalDate" className="text-sm font-medium text-slate-300">Next Renewal</label>
+              <input 
+                id="renewalDate"
+                title="Next Renewal Date"
+                type="date" 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all [color-scheme:dark]"
+                value={formData.nextRenewal}
+                onChange={e => setFormData({ ...formData, nextRenewal: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="expirationDate" className="text-sm font-medium text-slate-300">Expires (Optional)</label>
+              <input 
+                id="expirationDate"
+                title="Expiration Date"
+                type="date" 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all [color-scheme:dark]"
+                value={formData.expirationDate}
+                onChange={e => setFormData({ ...formData, expirationDate: e.target.value })}
+              />
+            </div>
           </div>
 
           <button 

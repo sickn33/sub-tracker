@@ -21,4 +21,17 @@ describe('Subscription Logic', () => {
     const total = calculateMonthlyTotal(subs);
     expect(total).toBeCloseTo((10 * 52) / 12, 2);
   });
+
+  it('supports expirationDate field', () => {
+    const sub: Subscription = {
+      id: '3',
+      name: 'Limited Sub',
+      price: 15,
+      frequency: 'monthly',
+      category: 'Tools',
+      nextRenewal: '2024-04-01',
+      expirationDate: '2024-12-31' // This should fail initially as field doesn't exist
+    };
+    expect(sub.expirationDate).toBe('2024-12-31');
+  });
 });

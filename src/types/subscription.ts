@@ -7,6 +7,7 @@ export interface Subscription {
   frequency: BillingFrequency;
   category: string;
   nextRenewal: string;
+  expirationDate?: string;
 }
 
 export const calculateMonthlyTotal = (subscriptions: Subscription[]): number => {

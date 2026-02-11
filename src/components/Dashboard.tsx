@@ -1,12 +1,13 @@
+import React from 'react';
 import type { Subscription } from '../types/subscription';
 import { calculateMonthlyTotal } from '../types/subscription';
-import { CreditCard, TrendingUp, Calendar, Hash } from 'lucide-react';
+import { CreditCard, TrendingUp, Calendar, Hash, Clock } from 'lucide-react';
 import { cn } from './AppShell';
 
 const StatCard = ({ label, value, icon: Icon, color }: {
   label: string,
   value: string,
-  icon: any,
+  icon: React.ElementType,
   color: string
 }) => (
   <div className="glass-card p-6 flex items-center gap-4 hover:scale-[1.02] transition-transform duration-200">
@@ -101,6 +102,13 @@ export const Dashboard = ({ subscriptions, onAddNew }: DashboardProps) => {
                   </div>
                   <span className="capitalize">{sub.frequency}</span>
                 </div>
+                
+                {sub.expirationDate && (
+                  <div className="flex items-center gap-2 text-sm text-amber-400/80 mt-1">
+                    <Clock size={14} />
+                    <span>Expires: {sub.expirationDate}</span>
+                  </div>
+                )}
               </div>
             ))
           )}
