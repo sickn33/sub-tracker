@@ -14,7 +14,8 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
     price: '',
     frequency: 'monthly' as BillingFrequency,
     category: 'Entertainment',
-    nextRenewal: new Date().toISOString().split('T')[0]
+    nextRenewal: new Date().toISOString().split('T')[0],
+    expirationDate: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,7 +27,8 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
       price: parseFloat(formData.price),
       frequency: formData.frequency,
       category: formData.category,
-      nextRenewal: formData.nextRenewal
+      nextRenewal: formData.nextRenewal,
+      expirationDate: formData.expirationDate || undefined
     });
     onClose();
   };
@@ -108,6 +110,20 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                         className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
                         value={formData.nextRenewal}
                         onChange={e => setFormData({...formData, nextRenewal: e.target.value})}
+                     />
+                </div>
+
+                <div className="space-y-2">
+                     <label htmlFor="sub-expires" className="block">
+                        <Body variant="caption" className="text-ink/60">Expiration Date (Optional)</Body>
+                     </label>
+                     <input 
+                        id="sub-expires"
+                        title="Expiration Date"
+                        type="date"
+                        className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
+                        value={formData.expirationDate}
+                        onChange={e => setFormData({...formData, expirationDate: e.target.value})}
                      />
                 </div>
 

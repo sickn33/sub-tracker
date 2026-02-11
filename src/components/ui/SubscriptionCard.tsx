@@ -9,6 +9,7 @@ interface SubscriptionProps {
   cycle: 'monthly' | 'yearly';
   nextPayment: string;
   category: string;
+  expirationDate?: string;
   onDelete?: (id: string) => void;
 }
 
@@ -20,6 +21,7 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
   cycle,
   nextPayment,
   category,
+  expirationDate,
   onDelete
 }) => {
   return (
@@ -51,6 +53,12 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
            <div className="text-right">
               <Body variant="caption" className="block mb-1">Next Billing</Body>
               <Mono variant="code" className="bg-transparent text-ink/70">{nextPayment}</Mono>
+              {expirationDate && (
+                <div className="mt-2">
+                   <Body variant="caption" className="block mb-1 text-ink/50">Expires</Body>
+                   <Mono variant="code" className="bg-transparent text-ink/70 text-xs">{expirationDate}</Mono>
+                </div>
+              )}
            </div>
            
            <div className="text-right min-w-[100px] flex flex-col items-end">

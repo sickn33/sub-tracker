@@ -87,6 +87,7 @@ function App() {
                     cycle={sub.frequency === 'yearly' ? 'yearly' : 'monthly'}
                     nextPayment={sub.nextRenewal}
                     category={sub.category}
+                    expirationDate={sub.expirationDate}
                     onDelete={handleDeleteSubscription}
                 />
             ))
