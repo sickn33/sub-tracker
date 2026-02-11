@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Layout } from './components/ui/Layout';
 import { Display, Body, Mono } from './components/ui/Typography';
-import { SubscriptionCard } from './components/ui/SubscriptionCard';
+import { DraggableSubscriptionCard } from './components/ui/DraggableSubscriptionCard';
 import { AddSubscriptionModal } from './components/ui/AddSubscriptionModal';
 import { Plus } from 'lucide-react';
+import { Reorder } from 'framer-motion';
 import { storage } from './types/storage';
 import { calculateMonthlyTotal, type Subscription } from './types/subscription';
 import './index.css';
@@ -93,21 +94,16 @@ function App() {
                 <Body variant="small">Initialize system by adding a subscription logic.</Body>
             </div>
           ) : (
-            subscriptions.map((sub) => (
-                <SubscriptionCard 
-                    key={sub.id} 
-                    id={sub.id}
-                    name={sub.name}
-                    price={sub.price}
-                    currency="EUR" // Assuming EUR for simplicity based on existing types
-                    cycle={sub.frequency === 'yearly' ? 'yearly' : 'monthly'}
-                    nextPayment={sub.nextRenewal}
-                    category={sub.category}
-                    expirationDate={sub.expirationDate}
-                    onDelete={handleDeleteSubscription}
-                    onEdit={handleEditSubscription}
-                />
-            ))
+            <Reorder.Group axis="y" values={subscriptions} onReorder={setSubscriptions} className="flex flex-col">
+                {subscriptions.map((sub) => (
+                    <DraggableSubscriptionCard 
+                        key={sub.id} 
+                        sub={sub}
+                        onDelete={handleDeleteSubscription}
+                        onEdit={handleEditSubscription}
+                    />
+                ))}
+            </Reorder.Group>
           )}
           
           {/* Footer Line */}

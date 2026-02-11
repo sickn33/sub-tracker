@@ -2,6 +2,7 @@ import React from 'react';
 import { Display, Body, Mono } from './Typography';
 import { formatDate } from '../../utils/date';
 
+import { GripVertical } from 'lucide-react';
 import type { Subscription } from '../../types/subscription';
 
 interface SubscriptionProps {
@@ -15,6 +16,7 @@ interface SubscriptionProps {
   expirationDate?: string;
   onDelete?: (id: string) => void;
   onEdit?: (sub: Subscription) => void;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export const SubscriptionCard: React.FC<SubscriptionProps> = ({
@@ -27,11 +29,21 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
   category,
   expirationDate,
   onDelete,
-  onEdit
+  onEdit,
+  dragHandleProps
 }) => {
   return (
-    <div className="group relative border-b border-structural p-4 md:px-6 hover:bg-concrete/50 transition-colors duration-200">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="group relative border-b border-structural p-4 md:px-6 hover:bg-concrete/50 transition-colors duration-200 flex items-center gap-4">
+      {/* Drag Handle - Only visible on hover or if provided */}
+      {dragHandleProps && (
+         <div 
+            {...dragHandleProps}
+            className="text-ink/20 hover:text-ink cursor-grab active:cursor-grabbing p-1"
+         >
+            <GripVertical size={20} />
+         </div>
+      )}
+      <div className="flex-1 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* Left: Identity */}
         <div className="flex items-start md:items-center gap-4">
           <div className="w-10 h-10 md:w-12 md:h-12 border border-structural bg-paper flex items-center justify-center text-xl font-display font-bold text-ink group-hover:bg-signal group-hover:text-white transition-colors duration-300">
