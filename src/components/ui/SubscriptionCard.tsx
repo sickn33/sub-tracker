@@ -1,5 +1,8 @@
 import React from 'react';
 import { Display, Body, Mono } from './Typography';
+import { formatDate } from '../../utils/date';
+
+import type { Subscription } from '../../types/subscription';
 
 interface SubscriptionProps {
   id: string; // Added ID for deletion
@@ -11,6 +14,7 @@ interface SubscriptionProps {
   category: string;
   expirationDate?: string;
   onDelete?: (id: string) => void;
+  onEdit?: (sub: Subscription) => void;
 }
 
 export const SubscriptionCard: React.FC<SubscriptionProps> = ({
@@ -22,7 +26,8 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
   nextPayment,
   category,
   expirationDate,
-  onDelete
+  onDelete,
+  onEdit
 }) => {
   return (
     <div className="group relative border-b border-structural p-4 md:px-6 hover:bg-concrete/50 transition-colors duration-200">
@@ -36,14 +41,25 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
             <Display as="h3" variant="medium" className="text-xl md:text-2xl">{name}</Display>
             <div className="flex items-center gap-2 mt-1">
                <Mono variant="label" className="inline-block">{category}</Mono>
-               {onDelete && (
-                  <button 
-                    onClick={() => onDelete(id)}
-                    className="md:hidden text-xs font-mono text-red-500 hover:underline uppercase"
-                  >
-                    [DELETE]
-                  </button>
-               )}
+               <Mono variant="label" className="inline-block">{category}</Mono>
+               <div className="flex gap-2">
+                 {onEdit && (
+                    <button 
+                      onClick={() => onEdit({ id, name, price, frequency: cycle, nextRenewal: nextPayment, category, expirationDate })}
+                      className="md:hidden text-xs font-mono text-ink/50 hover:underline uppercase"
+                    >
+                      [EDIT]
+                    </button>
+                 )}
+                 {onDelete && (
+                    <button 
+                      onClick={() => onDelete(id)}
+                      className="md:hidden text-xs font-mono text-red-500 hover:underline uppercase"
+                    >
+                      [DELETE]
+                    </button>
+                 )}
+               </div>
             </div>
           </div>
         </div>
@@ -52,11 +68,11 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
         <div className="flex items-end md:items-center justify-between md:justify-end gap-2 md:gap-12 min-w-[300px]">
            <div className="text-right">
               <Body variant="caption" className="block mb-1">Next Billing</Body>
-              <Mono variant="code" className="bg-transparent text-ink/70">{nextPayment}</Mono>
+              <Mono variant="code" className="bg-transparent text-ink/70">{formatDate(nextPayment)}</Mono>
               {expirationDate && (
                 <div className="mt-2">
                    <Body variant="caption" className="block mb-1 text-ink/50">Expires</Body>
-                   <Mono variant="code" className="bg-transparent text-ink/70 text-xs">{expirationDate}</Mono>
+                   <Mono variant="code" className="bg-transparent text-ink/70 text-xs">{formatDate(expirationDate)}</Mono>
                 </div>
               )}
            </div>
@@ -70,15 +86,26 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
               </div>
               <div className="flex items-center gap-3">
                  <Body variant="caption" className="text-right text-signal">/{cycle}</Body>
-                 {onDelete && (
-                    <button 
-                      onClick={() => onDelete(id)}
-                      className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-red-500 hover:text-red-600 uppercase"
-                      title="Remove Entry"
-                    >
-                      [DELETE]
-                    </button>
-                 )}
+                 <div className="flex gap-2">
+                   {onEdit && (
+                      <button 
+                        onClick={() => onEdit({ id, name, price, frequency: cycle, nextRenewal: nextPayment, category, expirationDate })}
+                        className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-ink/50 hover:text-ink uppercase"
+                        title="Edit Entry"
+                      >
+                        [EDIT]
+                      </button>
+                   )}
+                   {onDelete && (
+                      <button 
+                        onClick={() => onDelete(id)}
+                        className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-red-500 hover:text-red-600 uppercase"
+                        title="Remove Entry"
+                      >
+                        [DELETE]
+                      </button>
+                   )}
+                 </div>
               </div>
            </div>
         </div>

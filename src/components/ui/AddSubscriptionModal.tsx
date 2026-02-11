@@ -6,16 +6,17 @@ import type { Subscription, BillingFrequency } from '../../types/subscription';
 interface AddSubscriptionModalProps {
   onAdd: (sub: Omit<Subscription, 'id'>) => void;
   onClose: () => void;
+  initialData?: Subscription | null;
 }
 
-export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAdd, onClose }) => {
+export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAdd, onClose, initialData }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    frequency: 'monthly' as BillingFrequency,
-    category: 'Entertainment',
-    nextRenewal: new Date().toISOString().split('T')[0],
-    expirationDate: ''
+    name: initialData?.name || '',
+    price: initialData?.price.toString() || '',
+    frequency: (initialData?.frequency || 'monthly') as BillingFrequency,
+    category: initialData?.category || 'Entertainment',
+    nextRenewal: initialData?.nextRenewal || new Date().toISOString().split('T')[0],
+    expirationDate: initialData?.expirationDate || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,9 +45,12 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
             </button>
         </div>
 
+
         {/* Form Content */}
         <div className="p-8">
-            <Display as="h2" variant="medium" className="mb-6">New Subscription Entry</Display>
+            <Display as="h2" variant="medium" className="mb-6">
+              {initialData ? 'Edit Subscription' : 'New Subscription Entry'}
+            </Display>
             
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div className="space-y-2">
@@ -140,7 +144,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                         className="px-6 py-3 bg-ink text-paper font-mono text-sm hover:bg-signal transition-colors flex items-center gap-2"
                     >
                         <Check size={16} />
-                        CONFIRM ENTRY
+                        {initialData ? 'UPDATE ENTRY' : 'CONFIRM ENTRY'}
                     </button>
                 </div>
             </form>

@@ -12,6 +12,7 @@ function App() {
   // Initialize state lazily from storage to avoid useEffect sync issues
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => storage.loadSubscriptions());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
 
   // Save to storage whenever subscriptions change
   useEffect(() => {
@@ -19,11 +20,26 @@ function App() {
   }, [subscriptions]);
 
   const handleAddSubscription = (newSub: Omit<Subscription, 'id'>) => {
-    const subWithId: Subscription = {
-      ...newSub,
-      id: crypto.randomUUID()
-    };
-    setSubscriptions(prev => [...prev, subWithId]);
+    if (editingSubscription) {
+      setSubscriptions(prev => prev.map(sub => 
+        sub.id === editingSubscription.id 
+          ? { ...newSub, id: editingSubscription.id }
+          : sub
+      ));
+      setEditingSubscription(null);
+    } else {
+      const subWithId: Subscription = {
+        ...newSub,
+        id: crypto.randomUUID()
+      };
+      setSubscriptions(prev => [...prev, subWithId]);
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleEditSubscription = (sub: Subscription) => {
+    setEditingSubscription(sub);
+    setIsModalOpen(true);
   };
 
   const handleDeleteSubscription = (id: string) => {
@@ -89,6 +105,7 @@ function App() {
                     category={sub.category}
                     expirationDate={sub.expirationDate}
                     onDelete={handleDeleteSubscription}
+                    onEdit={handleEditSubscription}
                 />
             ))
           )}
@@ -105,7 +122,11 @@ function App() {
       {isModalOpen && (
         <AddSubscriptionModal 
             onAdd={handleAddSubscription} 
-            onClose={() => setIsModalOpen(false)} 
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingSubscription(null);
+            }}
+            initialData={editingSubscription}
         />
       )}
     </Layout>
