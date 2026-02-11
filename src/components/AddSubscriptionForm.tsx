@@ -36,6 +36,7 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
       <div className="glass-card w-full max-w-md p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
         <button 
           onClick={onClose}
+          title="Close form"
           className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
         >
           <X size={24} />
@@ -69,9 +70,10 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
                 onChange={e => setFormData({ ...formData, price: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Frequency</label>
+              <label htmlFor="frequency" className="text-sm font-medium text-slate-300">Frequency</label>
               <select 
+                id="frequency"
+                title="Billing Frequency"
                 className="w-full bg-[#1e293b] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
                 value={formData.frequency}
                 onChange={e => setFormData({ ...formData, frequency: e.target.value as BillingFrequency })}
@@ -84,8 +86,10 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Category</label>
+            <label htmlFor="category" className="text-sm font-medium text-slate-300">Category</label>
             <select 
+              id="category"
+              title="Subscription Category"
               className="w-full bg-[#1e293b] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
               value={formData.category}
               onChange={e => setFormData({ ...formData, category: e.target.value })}
@@ -100,8 +104,10 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Next Renewal</label>
+            <label htmlFor="renewalDate" className="text-sm font-medium text-slate-300">Next Renewal</label>
             <input 
+              id="renewalDate"
+              title="Next Renewal Date"
               type="date" 
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all [color-scheme:dark]"
               value={formData.nextRenewal}
