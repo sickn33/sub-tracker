@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 import type { Subscription, BillingFrequency } from '../types/subscription';
-import { cn } from './AppShell';
 
 interface AddSubscriptionFormProps {
   onAdd: (sub: Omit<Subscription, 'id'>) => void;
