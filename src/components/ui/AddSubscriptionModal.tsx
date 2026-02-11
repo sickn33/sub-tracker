@@ -15,7 +15,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
     name: initialData?.name || '',
     price: initialData?.price.toString() || '',
     frequency: (initialData?.frequency || 'monthly') as BillingFrequency,
-    category: initialData?.category || 'Entertainment',
+    category: initialData?.category || '',
     nextRenewal: initialData ? formatDate(initialData.nextRenewal) : formatDate(new Date().toISOString().split('T')[0]),
     expirationDate: initialData?.expirationDate ? formatDate(initialData.expirationDate) : ''
   });
@@ -76,6 +76,30 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                         onChange={e => setFormData({...formData, name: e.target.value.toUpperCase()})}
                         autoFocus
                     />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="sub-category" className="block">
+                        <Body variant="caption" className="text-ink/60">Category Classification</Body>
+                    </label>
+                    <input 
+                        id="sub-category"
+                        list="categories"
+                        className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal transition-colors uppercase"
+                        placeholder="ENTERTAINMENT"
+                        value={formData.category}
+                        onChange={e => setFormData({...formData, category: e.target.value.toUpperCase()})}
+                    />
+                    <datalist id="categories">
+                        <option value="ENTERTAINMENT" />
+                        <option value="UTILITIES" />
+                        <option value="WORK" />
+                        <option value="SOFTWARE" />
+                        <option value="PERSONAL" />
+                        <option value="HEALTH" />
+                        <option value="EDUCATION" />
+                        <option value="FINANCE" />
+                    </datalist>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">

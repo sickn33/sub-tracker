@@ -41,7 +41,6 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
             <Display as="h3" variant="medium" className="text-xl md:text-2xl">{name}</Display>
             <div className="flex items-center gap-2 mt-1">
                <Mono variant="label" className="inline-block">{category}</Mono>
-               <Mono variant="label" className="inline-block">{category}</Mono>
                <div className="flex gap-2">
                  {onEdit && (
                     <button 
