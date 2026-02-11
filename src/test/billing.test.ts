@@ -53,6 +53,21 @@ describe('calculateNextBillingDate', () => {
       // Simple implementation: add month. 
       // Jan 31 + 1 month = Feb 29. 
       // Feb 29 + 1 month = Mar 29.
-      expect(calculateNextBillingDate(today, pastDate, 'monthly')).toBe('2024-03-31');
+  expect(calculateNextBillingDate(today, pastDate, 'monthly')).toBe('2024-03-31');
+  });
+
+  it('should return empty string if the subscription has expired', () => {
+    const today = new Date('2024-06-01');
+    const pastDate = '2024-01-01';
+    const expirationDate = '2024-05-01';
+    expect(calculateNextBillingDate(today, pastDate, 'monthly', expirationDate)).toBe('');
+  });
+
+  it('should handle malformed input gracefully', () => {
+    const today = new Date('2024-01-01');
+    // @ts-expect-error - testing invalid input
+    expect(calculateNextBillingDate(today, '', 'monthly')).toBe('');
+    // @ts-expect-error - testing invalid input
+    expect(calculateNextBillingDate(today, 'invalid-date', 'monthly')).toBe('');
   });
 });

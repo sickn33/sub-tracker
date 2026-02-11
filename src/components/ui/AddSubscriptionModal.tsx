@@ -24,7 +24,12 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.price) return;
+    // Validate price
+    const priceVal = parseFloat(formData.price);
+    if (isNaN(priceVal) || priceVal < 0) {
+      alert('Please enter a valid, non-negative price.');
+      return;
+    }
 
     // Validate dates if present
     if (formData.nextRenewal && !isValidDate(formData.nextRenewal)) {

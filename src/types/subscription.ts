@@ -12,13 +12,16 @@ export interface Subscription {
 
 export const calculateMonthlyTotal = (subscriptions: Subscription[]): number => {
   return subscriptions.reduce((total, sub) => {
+    const price = typeof sub.price === 'number' && !isNaN(sub.price) ? sub.price : 0;
+    if (price < 0) return total; // Ignore negative prices
+
     switch (sub.frequency) {
       case 'monthly':
-        return total + sub.price;
+        return total + price;
       case 'yearly':
-        return total + sub.price / 12;
+        return total + price / 12;
       case 'weekly':
-        return total + (sub.price * 52) / 12;
+        return total + (price * 52) / 12;
       default:
         return total;
     }

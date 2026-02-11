@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Layout } from './components/ui/Layout';
 import { Display, Body, Mono } from './components/ui/Typography';
 import { DraggableSubscriptionCard } from './components/ui/DraggableSubscriptionCard';
@@ -17,7 +17,7 @@ function App() {
     const today = new Date();
     return loaded.map(sub => {
       if (sub.nextRenewal) {
-        const next = calculateNextBillingDate(today, sub.nextRenewal, sub.frequency);
+        const next = calculateNextBillingDate(today, sub.nextRenewal, sub.frequency, sub.expirationDate);
         if (next !== sub.nextRenewal) {
           return { ...sub, nextRenewal: next };
         }
@@ -60,7 +60,7 @@ function App() {
     setSubscriptions(prev => prev.filter(sub => sub.id !== id));
   };
 
-  const totalMonthly = calculateMonthlyTotal(subscriptions);
+  const totalMonthly = useMemo(() => calculateMonthlyTotal(subscriptions), [subscriptions]);
 
   return (
     <Layout>

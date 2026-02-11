@@ -22,20 +22,36 @@ const toLocalISOString = (date: Date): string => {
 export const calculateNextBillingDate = (
   currentDate: Date,
   subscriptionDate: string,
-  frequency: BillingFrequency
+  frequency: BillingFrequency,
+  expirationDate?: string
 ): string => {
   if (!subscriptionDate) return '';
 
-  const [sYear, sMonth, sDay] = subscriptionDate.split('-').map(Number);
+  const parts = subscriptionDate.split('-');
+  if (parts.length !== 3) return '';
+  
+  const [sYear, sMonth, sDay] = parts.map(Number);
+  if (isNaN(sYear) || isNaN(sMonth) || isNaN(sDay)) return '';
+
   let date = new Date(sYear, sMonth - 1, sDay);
+  if (isNaN(date.getTime())) return '';
   
   const today = new Date(currentDate);
   today.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
 
-  // If the date is today or in the future, return formatted input
+  // Helper to check expiration
+  const isExpired = (targetDate: Date): boolean => {
+    if (!expirationDate) return false;
+    const [eYear, eMonth, eDay] = expirationDate.split('-').map(Number);
+    const exp = new Date(eYear, eMonth - 1, eDay);
+    exp.setHours(0, 0, 0, 0);
+    return targetDate > exp;
+  };
+
+  // If the date is today or in the future, return it (unless expired)
   if (date >= today) {
-    return toLocalISOString(date);
+    return isExpired(date) ? '' : toLocalISOString(date);
   }
 
   // Otherwise, roll over until we reach a date that is >= today
@@ -46,9 +62,7 @@ export const calculateNextBillingDate = (
     if (frequency === 'weekly') {
       date = new Date(sYear, sMonth - 1, sDay + (7 * periods));
     } else if (frequency === 'monthly') {
-      // Create new date for the target month
       date = new Date(sYear, sMonth - 1 + periods, anchorDay);
-      // Handle day clipping (e.g. Jan 31 -> Feb 29)
       if (date.getDate() !== anchorDay) {
          date.setDate(0); 
       }
@@ -59,6 +73,10 @@ export const calculateNextBillingDate = (
       }
     }
     date.setHours(0, 0, 0, 0);
+
+    // If we've rolled over and it's already expired, stop and return empty
+    if (isExpired(date)) return '';
+
     periods++;
   }
 
