@@ -69,6 +69,7 @@ export const AddSubscriptionForm = ({ onAdd, onClose }: AddSubscriptionFormProps
                 value={formData.price}
                 onChange={e => setFormData({ ...formData, price: e.target.value })}
               />
+            </div>
             <div className="space-y-2">
               <label htmlFor="frequency" className="text-sm font-medium text-slate-300">Frequency</label>
               <select 
