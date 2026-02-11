@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Display, Body, Mono } from './Typography';
 import { X, Check } from 'lucide-react';
 import type { Subscription, BillingFrequency } from '../../types/subscription';
+import { formatDate, parseDate, isValidDate } from '../../utils/date';
 
 interface AddSubscriptionModalProps {
   onAdd: (sub: Omit<Subscription, 'id'>) => void;
@@ -15,21 +16,31 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
     price: initialData?.price.toString() || '',
     frequency: (initialData?.frequency || 'monthly') as BillingFrequency,
     category: initialData?.category || 'Entertainment',
-    nextRenewal: initialData?.nextRenewal || new Date().toISOString().split('T')[0],
-    expirationDate: initialData?.expirationDate || ''
+    nextRenewal: initialData ? formatDate(initialData.nextRenewal) : formatDate(new Date().toISOString().split('T')[0]),
+    expirationDate: initialData?.expirationDate ? formatDate(initialData.expirationDate) : ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.price) return;
 
+    // Validate dates if present
+    if (!isValidDate(formData.nextRenewal)) {
+      alert('Please enter a valid renewal date (DD/MM/YYYY)');
+      return;
+    }
+    if (formData.expirationDate && !isValidDate(formData.expirationDate)) {
+       alert('Please enter a valid expiration date (DD/MM/YYYY)');
+       return;
+    }
+
     onAdd({
       name: formData.name,
       price: parseFloat(formData.price),
       frequency: formData.frequency,
       category: formData.category,
-      nextRenewal: formData.nextRenewal,
-      expirationDate: formData.expirationDate || undefined
+      nextRenewal: parseDate(formData.nextRenewal),
+      expirationDate: formData.expirationDate ? parseDate(formData.expirationDate) : undefined
     });
     onClose();
   };
@@ -110,7 +121,8 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                      <input 
                         id="sub-renewal"
                         title="Initial Renewal Date"
-                        type="date"
+                        type="text"
+                        placeholder="DD/MM/YYYY"
                         className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
                         value={formData.nextRenewal}
                         onChange={e => setFormData({...formData, nextRenewal: e.target.value})}
@@ -124,7 +136,8 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                      <input 
                         id="sub-expires"
                         title="Expiration Date"
-                        type="date"
+                        type="text"
+                        placeholder="DD/MM/YYYY"
                         className="w-full bg-concrete border-b border-structural p-3 font-mono text-sm focus:outline-none focus:border-signal uppercase"
                         value={formData.expirationDate}
                         onChange={e => setFormData({...formData, expirationDate: e.target.value})}
