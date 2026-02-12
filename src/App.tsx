@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './components/ui/Layout';
 import { Display, Body, Mono } from './components/ui/Typography';
 import { DraggableSubscriptionCard } from './components/ui/DraggableSubscriptionCard';
@@ -9,6 +9,9 @@ import { Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { useSubscriptions } from './hooks/useSubscriptions';
 import type { Subscription } from './types/subscription';
+import { downloadICS } from './utils/calendar';
+import { checkUpcomingRenewals, requestNotificationPermission } from './utils/notifications';
+import { Calendar } from 'lucide-react';
 import './index.css';
 
 function App() {
@@ -54,9 +57,21 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    // Check for renewals on load
+    if (subscriptions.length > 0) {
+        checkUpcomingRenewals(subscriptions);
+    }
+  }, [subscriptions]);
+
+  const handleInteraction = () => {
+    // Request permission on user interaction
+    requestNotificationPermission();
+  };
+
   return (
     <Layout>
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col" onClick={handleInteraction}>
         {/* Header Section */}
         <header className="px-4 py-8 md:px-8 border-b border-structural flex flex-col md:flex-row md:items-end justify-between gap-6 bg-paper relative z-20">
           <div>
@@ -81,13 +96,22 @@ function App() {
                 </div>
             </div>
             
-            <button 
-                onClick={() => setIsModalOpen(true)}
-                className="group flex items-center gap-2 px-6 py-3 bg-paper border border-ink text-ink hover:bg-ink hover:text-paper transition-all uppercase font-mono text-sm tracking-wide"
-            >
-                <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-                Input Data
-            </button>
+            <div className="flex gap-3">
+                <button 
+                    onClick={() => downloadICS(subscriptions)}
+                    title="Export to Calendar"
+                    className="group flex items-center justify-center w-12 h-12 bg-paper border border-ink text-ink hover:bg-ink hover:text-paper transition-all"
+                >
+                    <Calendar size={20} />
+                </button>
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="group flex items-center gap-2 px-6 py-3 bg-paper border border-ink text-ink hover:bg-ink hover:text-paper transition-all uppercase font-mono text-sm tracking-wide"
+                >
+                    <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+                    Input Data
+                </button>
+            </div>
           </div>
         </header>
 
