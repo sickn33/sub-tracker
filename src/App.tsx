@@ -5,16 +5,30 @@ import { DraggableSubscriptionCard } from './components/ui/DraggableSubscription
 import { AddSubscriptionModal } from './components/ui/AddSubscriptionModal';
 import { DeleteConfirmationModal } from './components/ui/DeleteConfirmationModal';
 import { MetricsDashboard } from './components/ui/MetricsDashboard';
-import { Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { useSubscriptions } from './hooks/useSubscriptions';
 import type { Subscription } from './types/subscription';
 import { downloadICS } from './utils/calendar';
 import { checkUpcomingRenewals, requestNotificationPermission } from './utils/notifications';
-import { Calendar } from 'lucide-react';
+import { Calendar, Plus, Settings } from 'lucide-react';
+import { SearchBar } from './components/ui/SearchBar';
+import { SettingsModal } from './components/ui/SettingsModal';
+import { useSettings } from './hooks/useSettings';
+import { useLocalBackup } from './hooks/useLocalBackup';
 import './index.css';
 
 function App() {
+  const { settings, updateCurrency } = useSettings();
+  const { 
+    fileHandle, 
+    lastSaved, 
+    error: backupError, 
+    connectBackupFile, 
+    saveToBackup 
+  } = useLocalBackup();
+  
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { 
     subscriptions, 
     setSubscriptions, 
@@ -64,10 +78,52 @@ function App() {
     }
   }, [subscriptions]);
 
+  // Auto-save when subscriptions change
+  useEffect(() => {
+    if (fileHandle && subscriptions.length > 0) {
+      saveToBackup(subscriptions);
+    }
+  }, [subscriptions, fileHandle, saveToBackup]);
+
   const handleInteraction = () => {
     // Request permission on user interaction
     requestNotificationPermission();
   };
+
+  const handleExportJSON = () => {
+    const dataStr = JSON.stringify(subscriptions, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'sub-tracker-backup.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleImportJSON = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (Array.isArray(json)) {
+            // Basic validation could go here
+            setSubscriptions(json);
+            setIsSettingsOpen(false);
+        } else {
+            alert('Invalid backup file format');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Failed to parse JSON');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const filteredSubscriptions = subscriptions.filter(sub => 
+    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Layout>
@@ -85,11 +141,23 @@ function App() {
             </Body>
           </div>
           
-          <div className="flex flex-col items-end gap-4">
-            <div className="bg-ink text-paper p-6 min-w-[240px] border-l-4 border-signal">
+          <div className="flex flex-col items-end gap-4 w-full md:w-auto">
+            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                <SearchBar value={searchTerm} onChange={setSearchTerm} />
+                
+                <button 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="p-3 bg-paper border border-ink text-ink hover:bg-ink hover:text-paper transition-all"
+                  title="Open Settings"
+                >
+                  <Settings size={20} />
+                </button>
+            </div>
+
+            <div className="bg-ink text-paper p-6 min-w-[240px] border-l-4 border-signal w-full md:w-auto">
                 <Body variant="caption" className="text-structural mb-2">Total Monthly Commit</Body>
                 <div className="flex items-baseline gap-2">
-                <span className="text-structural font-mono text-lg">€</span>
+                <span className="text-structural font-mono text-lg">{settings.currency}</span>
                 <Mono variant="code" className="text-4xl bg-transparent text-paper font-bold tracking-tighter">
                     {totalMonthly.toFixed(2)}
                 </Mono>
@@ -116,21 +184,22 @@ function App() {
         </header>
 
         {/* Metrics Section */}
-        {subscriptions.length > 0 && <MetricsDashboard subscriptions={subscriptions} />}
+        {subscriptions.length > 0 && <MetricsDashboard subscriptions={subscriptions} currency={settings.currency} />}
 
         {/* List Section */}
         <div className="flex-1 overflow-auto">
-          {subscriptions.length === 0 ? (
+          {filteredSubscriptions.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-ink/40">
                 <Mono variant="code" className="mb-2">NO DATA FOUND</Mono>
                 <Body variant="small">Initialize system by adding a subscription logic.</Body>
             </div>
           ) : (
             <Reorder.Group axis="y" values={subscriptions} onReorder={setSubscriptions} className="flex flex-col">
-                {subscriptions.map((sub) => (
+                {filteredSubscriptions.map((sub) => (
                     <DraggableSubscriptionCard 
                         key={sub.id} 
                         sub={sub}
+                        currency={settings.currency}
                         onDelete={handleDeleteClick}
                         onEdit={handleEditSubscription}
                     />
@@ -155,6 +224,7 @@ function App() {
               setEditingSubscription(null);
             }}
             initialData={editingSubscription}
+            currency={settings.currency}
         />
       )}
 
@@ -163,6 +233,19 @@ function App() {
           subscription={deletingSubscription}
           onConfirm={handleConfirmDelete}
           onClose={() => setDeletingSubscription(null)}
+        />
+      )}
+      {isSettingsOpen && (
+        <SettingsModal 
+            onClose={() => setIsSettingsOpen(false)}
+            currency={settings.currency}
+            onCurrencyChange={updateCurrency}
+            backupConnected={!!fileHandle}
+            onConnectBackup={connectBackupFile}
+            lastBackupTime={lastSaved}
+            backupError={backupError}
+            onExport={handleExportJSON}
+            onImport={handleImportJSON}
         />
       )}
     </Layout>

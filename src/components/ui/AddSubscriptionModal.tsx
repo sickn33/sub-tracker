@@ -10,9 +10,10 @@ interface AddSubscriptionModalProps {
   onAdd: (sub: Omit<Subscription, 'id'>) => void;
   onClose: () => void;
   initialData?: Subscription | null;
+  currency: string;
 }
 
-export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAdd, onClose, initialData }) => {
+export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAdd, onClose, initialData, currency }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     price: initialData?.price.toString() || '',
@@ -116,7 +117,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                              <Body variant="caption" className="text-ink/60">Cost Impact</Body>
                          </label>
                          <div className="relative">
-                            <span className="absolute left-3 top-3 font-mono text-ink/40">€</span>
+                            <span className="absolute left-3 top-3 font-mono text-ink/40">{currency}</span>
                             <input 
                                 id="sub-price"
                                 type="number"

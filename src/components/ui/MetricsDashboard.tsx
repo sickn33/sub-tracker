@@ -15,6 +15,7 @@ import { Mono } from './Typography';
 
 interface MetricsDashboardProps {
   subscriptions: Subscription[];
+  currency: string;
 }
 
 const COLORS = ['#222222', '#555555', '#888888', '#aaaaaa', '#cccccc', '#eeeeee'];
@@ -28,9 +29,10 @@ interface TooltipProps {
         };
         value: number;
     }>;
+    currency: string;
 }
 
-const CustomTooltip = ({ active, payload }: TooltipProps) => {
+const CustomTooltip = ({ active, payload, currency }: TooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-ink text-paper p-3 border border-structural shadow-xl">
@@ -38,7 +40,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps) => {
             {payload[0].payload.name}
         </Mono>
         <div className="flex items-baseline gap-1">
-            <span className="font-mono text-xs">€</span>
+            <span className="font-mono text-xs">{currency}</span>
             <span className="font-mono text-lg font-bold">{payload[0].value.toFixed(2)}</span>
         </div>
       </div>
@@ -47,7 +49,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps) => {
   return null;
 };
 
-export const MetricsDashboard = ({ subscriptions }: MetricsDashboardProps) => {
+export const MetricsDashboard = ({ subscriptions, currency }: MetricsDashboardProps) => {
   
   const categoryData = useMemo(() => {
     const categories: Record<string, number> = {};
@@ -102,7 +104,7 @@ export const MetricsDashboard = ({ subscriptions }: MetricsDashboardProps) => {
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip content={<CustomTooltip />} />
+                            <Tooltip content={<CustomTooltip currency={currency} />} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
@@ -134,7 +136,7 @@ export const MetricsDashboard = ({ subscriptions }: MetricsDashboardProps) => {
                                 interval={0}
                                 tickFormatter={(val) => val.slice(0, 3)} // Truncate for style
                             />
-                            <Tooltip content={<CustomTooltip />} cursor={{fill: 'transparent'}} />
+                            <Tooltip content={<CustomTooltip currency={currency} />} cursor={{fill: 'transparent'}} />
                             <Bar dataKey="value" fill="#222">
                                 {topExpensesData.map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={index === 0 ? '#000' : '#666'} />

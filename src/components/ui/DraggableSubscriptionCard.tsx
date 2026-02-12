@@ -5,12 +5,14 @@ import type { Subscription } from '../../types/subscription';
 
 interface DraggableSubscriptionCardProps {
   sub: Subscription;
+  currency: string;
   onDelete: (id: string) => void;
   onEdit: (sub: Subscription) => void;
 }
 
 export const DraggableSubscriptionCard: React.FC<DraggableSubscriptionCardProps> = ({
   sub,
+  currency,
   onDelete,
   onEdit
 }) => {
@@ -27,7 +29,7 @@ export const DraggableSubscriptionCard: React.FC<DraggableSubscriptionCardProps>
         id={sub.id}
         name={sub.name}
         price={sub.price}
-        currency="EUR" // Assuming EUR from App.tsx context
+        currency={currency} // Dynamic currency
         cycle={sub.frequency === 'yearly' ? 'yearly' : 'monthly'}
         nextPayment={sub.nextRenewal || ''} // Handle optional logic here or in child
         category={sub.category}
