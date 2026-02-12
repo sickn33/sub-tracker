@@ -1,31 +1,23 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MetricsDashboard } from '../components/ui/MetricsDashboard';
-import { Subscription } from '../types/subscription';
+import { type Subscription } from '../types/subscription';
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock Recharts to avoid canvas issues in tests and focus on data flow
 vi.mock('recharts', () => {
-    const OriginalModule = vi.importActual('recharts');
     return {
-        ...OriginalModule,
-        ResponsiveContainer: ({ children }: any) => <div data-testid="responsive-container">{children}</div>,
-        PieChart: ({ children }: any) => <div data-testid="pie-chart">{children}</div>,
-        Pie: ({ data }: any) => (
+        ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="responsive-container">{children}</div>,
+        PieChart: ({ children }: { children: React.ReactNode }) => <div data-testid="pie-chart">{children}</div>,
+        Pie: ({ data }: { data: Array<{ name: string; value: number }> }) => (
             <div data-testid="pie">
-                {data.map((d: any) => (
+                {data.map((d) => (
                     <div key={d.name} data-testid="pie-slice" data-name={d.name} data-value={d.value} />
                 ))}
             </div>
         ),
-        BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
-        Bar: ({ data }: any) => (
-            <div data-testid="bar">
-                {/* Bar usually doesn't take data directly in recent Recharts versions if parent has it, 
-                    but for this mock we assume data is passed or accessible. 
-                    Actually, BarChart takes data. check implementation. 
-                    BarChart passes data to Bar. 
-                */}
-            </div>
+        BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
+        Bar: () => (
+            <div data-testid="bar" />
         ),
         // Mock other components as simple render-throughs
         Cell: () => null,
@@ -73,5 +65,20 @@ describe('MetricsDashboard Integration', () => {
         
         const slice = screen.getByTestId('pie-slice');
         expect(slice).toHaveAttribute('data-value', '10');
+    });
+
+    it('merges categories with different casing', () => {
+        const subs: Subscription[] = [
+            { id: '1', name: 'App 1', price: 10, frequency: 'monthly', category: 'Entertainment' },
+            { id: '2', name: 'App 2', price: 20, frequency: 'monthly', category: 'ENTERTAINMENT' }
+        ];
+
+        render(<MetricsDashboard subscriptions={subs} />);
+        
+        // Should produce single slice with value 30
+        const slices = screen.getAllByTestId('pie-slice');
+        expect(slices).toHaveLength(1);
+        expect(slices[0]).toHaveAttribute('data-name', 'ENTERTAINMENT');
+        expect(slices[0]).toHaveAttribute('data-value', '30');
     });
 });

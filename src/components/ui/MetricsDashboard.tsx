@@ -53,7 +53,7 @@ export const MetricsDashboard = ({ subscriptions }: MetricsDashboardProps) => {
     const categories: Record<string, number> = {};
     subscriptions.forEach(sub => {
       const cost = calculateCostPerMonth(sub.price, sub.frequency);
-      const cat = sub.category || 'UNCATEGORIZED';
+      const cat = (sub.category || 'UNCATEGORIZED').toUpperCase();
       categories[cat] = (categories[cat] || 0) + cost;
     });
 
@@ -111,7 +111,7 @@ export const MetricsDashboard = ({ subscriptions }: MetricsDashboardProps) => {
                     {categoryData.slice(0, 4).map((entry, index) => (
                         <div key={entry.name} className="flex items-center gap-2">
                             <div 
-                                className="w-2 h-2" 
+                                className={`w-2 h-2 bg-[${COLORS[index % COLORS.length]}]`}
                                 style={{ backgroundColor: COLORS[index % COLORS.length] }} 
                             />
                             <Mono variant="code" className="text-[10px] text-ink/60">{entry.name}</Mono>
