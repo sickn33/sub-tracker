@@ -24,7 +24,9 @@ function App() {
     lastSaved, 
     error: backupError, 
     connectBackupFile, 
-    saveToBackup 
+    saveToBackup,
+    permissionStatus,
+    requestBackupPermission
   } = useLocalBackup();
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -80,10 +82,10 @@ function App() {
 
   // Auto-save when subscriptions change
   useEffect(() => {
-    if (fileHandle && subscriptions.length > 0) {
+    if (fileHandle && permissionStatus === 'granted' && subscriptions.length > 0) {
       saveToBackup(subscriptions);
     }
-  }, [subscriptions, fileHandle, saveToBackup]);
+  }, [subscriptions, fileHandle, permissionStatus, saveToBackup]);
 
   const handleInteraction = () => {
     // Request permission on user interaction
@@ -242,6 +244,8 @@ function App() {
             onCurrencyChange={updateCurrency}
             backupConnected={!!fileHandle}
             onConnectBackup={connectBackupFile}
+            permissionStatus={permissionStatus}
+            onRequestPermission={requestBackupPermission}
             lastBackupTime={lastSaved}
             backupError={backupError}
             onExport={handleExportJSON}

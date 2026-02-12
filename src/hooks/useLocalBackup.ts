@@ -3,8 +3,11 @@ import { getHandle, saveHandle } from '../utils/idb';
 
 const HANDLE_KEY = 'backup-file-handle';
 
+export type PermissionStatus = 'granted' | 'denied' | 'prompt';
+
 export function useLocalBackup() {
   const [fileHandle, setFileHandle] = useState<FileSystemFileHandle | null>(null);
+  const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>('prompt');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,13 +20,8 @@ export function useLocalBackup() {
         if (handle) {
           // Verify permission
           const permission = await handle.queryPermission({ mode: 'readwrite' });
-          if (permission === 'granted') {
-            setFileHandle(handle);
-          } else {
-             // If not granted, we still keep the handle but need to request permission later
-             // For now, let's just keep it and handle re-request on save/connect
-             setFileHandle(handle);
-          }
+          setPermissionStatus(permission);
+          setFileHandle(handle);
         }
       } catch (err) {
         console.error('Failed to restore handle:', err);
@@ -44,6 +42,7 @@ export function useLocalBackup() {
       });
 
       setFileHandle(handle);
+      setPermissionStatus('granted');
       await saveHandle(HANDLE_KEY, handle);
       return true;
     } catch (err) {
@@ -55,22 +54,25 @@ export function useLocalBackup() {
     }
   }, []);
 
+  const requestBackupPermission = useCallback(async () => {
+    if (!fileHandle) return false;
+    
+    try {
+      const status = await fileHandle.requestPermission({ mode: 'readwrite' });
+      setPermissionStatus(status);
+      return status === 'granted';
+    } catch (err) {
+      console.error('Failed to request permission:', err);
+      return false;
+    }
+  }, [fileHandle]);
+
   const saveToBackup = useCallback(async (data: unknown) => {
-    if (!fileHandle) return;
+    if (!fileHandle || permissionStatus !== 'granted') return;
 
     try {
       setIsSaving(true);
       setError(null);
-
-      // Check permission
-      const permission = await fileHandle.queryPermission({ mode: 'readwrite' });
-      
-      if (permission !== 'granted') {
-        const request = await fileHandle.requestPermission({ mode: 'readwrite' });
-        if (request !== 'granted') {
-          throw new Error('Permission denied');
-        }
-      }
 
       const writable = await fileHandle.createWritable();
       await writable.write(JSON.stringify(data, null, 2));
@@ -79,20 +81,24 @@ export function useLocalBackup() {
       setLastSaved(new Date());
     } catch (err) {
       console.error('Auto-save failed:', err);
-      setError('Failed to auto-save. Please reconnect backup file.');
-      // If permission error, might want to clear handle?
-      // For now, keep it so user can retry
+      // Check if it's a permission error that happened during write
+      if ((err as Error).name === 'NotAllowedError') {
+        setPermissionStatus('denied');
+      }
+      setError('Failed to auto-save. Please reconnect or grant permission.');
     } finally {
       setIsSaving(false);
     }
-  }, [fileHandle]);
+  }, [fileHandle, permissionStatus]);
 
   return {
     fileHandle,
+    permissionStatus,
     lastSaved,
     error,
     isSaving,
     connectBackupFile,
+    requestBackupPermission,
     saveToBackup
   };
 }

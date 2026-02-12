@@ -1,7 +1,7 @@
-
-import { X, Download, Upload, Save, AlertCircle, Check } from 'lucide-react';
+import { X, Download, Upload, Save, AlertCircle, Check, Lock, Unlock } from 'lucide-react';
 import { Mono, Display, Body } from './Typography';
 import { type Currency } from '../../hooks/useSettings';
+import { type PermissionStatus } from '../../hooks/useLocalBackup';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -9,6 +9,8 @@ interface SettingsModalProps {
   onCurrencyChange: (c: Currency) => void;
   backupConnected: boolean;
   onConnectBackup: () => void;
+  permissionStatus: PermissionStatus;
+  onRequestPermission: () => Promise<boolean>;
   lastBackupTime: Date | null;
   backupError: string | null;
   onExport: () => void;
@@ -23,6 +25,8 @@ export const SettingsModal = ({
   onCurrencyChange,
   backupConnected,
   onConnectBackup,
+  permissionStatus,
+  onRequestPermission,
   lastBackupTime,
   backupError,
   onExport,
@@ -35,6 +39,9 @@ export const SettingsModal = ({
       onImport(file);
     }
   };
+
+  const isPermissionGranted = permissionStatus === 'granted';
+  const needsPermission = backupConnected && !isPermissionGranted;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/20 backdrop-blur-sm">
@@ -79,16 +86,22 @@ export const SettingsModal = ({
             <section>
                 <div className="flex items-center justify-between mb-4">
                     <Mono variant="label" className="text-ink/40">Data Persistence</Mono>
-                    {backupConnected && (
+                    {backupConnected && isPermissionGranted && (
                         <div className="flex items-center gap-2 text-signal text-xs font-mono">
                             <div className="w-2 h-2 bg-signal animate-pulse rounded-full" />
                             AUTO-SYNC ACTIVE
                         </div>
                     )}
+                    {needsPermission && (
+                        <div className="flex items-center gap-2 text-red-500 text-xs font-mono">
+                            <AlertCircle size={12} />
+                            SYNC PAUSED
+                        </div>
+                    )}
                 </div>
 
                 {/* Auto-Backup Card */}
-                <div className={`border ${backupConnected ? 'border-signal bg-signal/5' : 'border-structural bg-concrete/10'} p-4 mb-4 transition-all`}>
+                <div className={`border ${backupConnected ? (isPermissionGranted ? 'border-signal bg-signal/5' : 'border-red-500 bg-red-500/5') : 'border-structural bg-concrete/10'} p-4 mb-4 transition-all`}>
                     <div className="flex items-start justify-between mb-2">
                         <div>
                             <div className="font-bold flex items-center gap-2">
@@ -97,35 +110,49 @@ export const SettingsModal = ({
                             </div>
                             <div className="text-sm text-ink/60 mt-1 max-w-xs">
                                 {backupConnected 
-                                    ? `Syncing changes to local file.` 
+                                    ? (isPermissionGranted 
+                                        ? `Syncing changes to local file.` 
+                                        : "Permission required to write to the backup file.")
                                     : "Connect a local JSON file to enable auto-saving on every change."
                                 }
                             </div>
                         </div>
-                        <button
-                            onClick={onConnectBackup}
-                            disabled={backupConnected}
-                            className={`px-3 py-1 text-xs font-mono border ${
-                                backupConnected 
-                                ? 'border-signal text-signal opacity-50 cursor-default' 
-                                : 'border-ink text-ink hover:bg-ink hover:text-paper'
-                            }`}
-                        >
-                            {backupConnected ? 'CONNECTED' : 'CONNECT FILE'}
-                        </button>
+                        {backupConnected ? (
+                            isPermissionGranted ? (
+                                <div className="px-3 py-1 text-xs font-mono border border-signal text-signal opacity-50 cursor-default flex items-center gap-1">
+                                    <Unlock size={12} />
+                                    CONNECTED
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={onRequestPermission}
+                                    className="px-3 py-1 text-xs font-mono border border-red-500 text-red-500 hover:bg-red-500 hover:text-paper flex items-center gap-1"
+                                >
+                                    <Lock size={12} />
+                                    GRANT ACCESS
+                                </button>
+                            )
+                        ) : (
+                            <button
+                                onClick={onConnectBackup}
+                                className="px-3 py-1 text-xs font-mono border border-ink text-ink hover:bg-ink hover:text-paper"
+                            >
+                                CONNECT FILE
+                            </button>
+                        )}
                     </div>
                     
-                    {lastBackupTime && (
+                    {lastBackupTime && isPermissionGranted && (
                         <div className="mt-2 text-xs font-mono text-ink/40 flex items-center gap-1">
                             <Check size={12} />
                             Last saved: {lastBackupTime.toLocaleTimeString()}
                         </div>
                     )}
                     
-                    {backupError && (
+                    {(backupError || (needsPermission && !backupError)) && (
                         <div className="mt-2 text-xs font-mono text-red-500 flex items-center gap-1">
                             <AlertCircle size={12} />
-                            {backupError}
+                            {backupError || "Browser blocks file access until you grant permission."}
                         </div>
                     )}
                 </div>
