@@ -1,15 +1,9 @@
-import React from 'react';
-import { LayoutDashboard, PlusCircle, Settings, LogOut } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-/** Utility for tailwind class merging */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import React, { type ElementType } from 'react';
+import { LayoutDashboard, PlusCircle, Settings, LogOut, type LucideIcon } from 'lucide-react';
+import { cn } from '../utils/cn';
 
 export const SidebarItem = ({ icon: Icon, label, active, onClick }: { 
-  icon: any, 
+  icon: LucideIcon | ElementType, 
   label: string, 
   active?: boolean,
   onClick?: () => void 

@@ -1,52 +1,35 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
 import { Layout } from './components/ui/Layout';
 import { Display, Body, Mono } from './components/ui/Typography';
 import { DraggableSubscriptionCard } from './components/ui/DraggableSubscriptionCard';
 import { AddSubscriptionModal } from './components/ui/AddSubscriptionModal';
+import { DeleteConfirmationModal } from './components/ui/DeleteConfirmationModal';
 import { Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
-import { storage } from './types/storage';
-import { calculateMonthlyTotal, type Subscription } from './types/subscription';
-import { calculateNextBillingDate } from './utils/billing';
+import { useSubscriptions } from './hooks/useSubscriptions';
+import type { Subscription } from './types/subscription';
 import './index.css';
 
 function App() {
-  /* Initialize state lazily from storage and apply Smart Rollover */
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => {
-    const loaded = storage.loadSubscriptions();
-    const today = new Date();
-    return loaded.map(sub => {
-      if (sub.nextRenewal) {
-        const next = calculateNextBillingDate(today, sub.nextRenewal, sub.frequency, sub.expirationDate);
-        if (next !== sub.nextRenewal) {
-          return { ...sub, nextRenewal: next };
-        }
-      }
-      return sub;
-    });
-  });
+  const { 
+    subscriptions, 
+    setSubscriptions, 
+    addSubscription, 
+    updateSubscription, 
+    removeSubscription, 
+    totalMonthly 
+  } = useSubscriptions();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
-
-  // Save to storage whenever subscriptions change
-  useEffect(() => {
-    storage.saveSubscriptions(subscriptions);
-  }, [subscriptions]);
+  const [deletingSubscription, setDeletingSubscription] = useState<Subscription | null>(null);
 
   const handleAddSubscription = (newSub: Omit<Subscription, 'id'>) => {
     if (editingSubscription) {
-      setSubscriptions(prev => prev.map(sub => 
-        sub.id === editingSubscription.id 
-          ? { ...newSub, id: editingSubscription.id }
-          : sub
-      ));
+      updateSubscription(editingSubscription.id, newSub);
       setEditingSubscription(null);
     } else {
-      const subWithId: Subscription = {
-        ...newSub,
-        id: crypto.randomUUID()
-      };
-      setSubscriptions(prev => [...prev, subWithId]);
+      addSubscription(newSub);
     }
     setIsModalOpen(false);
   };
@@ -56,11 +39,19 @@ function App() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteSubscription = (id: string) => {
-    setSubscriptions(prev => prev.filter(sub => sub.id !== id));
+  const handleDeleteClick = (id: string) => {
+    const sub = subscriptions.find(s => s.id === id);
+    if (sub) {
+      setDeletingSubscription(sub);
+    }
   };
 
-  const totalMonthly = useMemo(() => calculateMonthlyTotal(subscriptions), [subscriptions]);
+  const handleConfirmDelete = () => {
+    if (deletingSubscription) {
+      removeSubscription(deletingSubscription.id);
+      setDeletingSubscription(null);
+    }
+  };
 
   return (
     <Layout>
@@ -70,7 +61,7 @@ function App() {
           <div>
             <div className="flex items-center gap-3 mb-2">
                <Mono variant="label" className="border-signal text-signal bg-signal/5">System Active</Mono>
-               <Mono variant="code" className="text-xs text-ink/40">V 1.1.0</Mono>
+               <Mono variant="code" className="text-xs text-ink/40">V 1.2.0</Mono>
             </div>
             <Display variant="giant">SUB_TRACKER</Display>
             <Body variant="lead" className="mt-4 max-w-xl">
@@ -112,7 +103,7 @@ function App() {
                     <DraggableSubscriptionCard 
                         key={sub.id} 
                         sub={sub}
-                        onDelete={handleDeleteSubscription}
+                        onDelete={handleDeleteClick}
                         onEdit={handleEditSubscription}
                     />
                 ))}
@@ -136,6 +127,14 @@ function App() {
               setEditingSubscription(null);
             }}
             initialData={editingSubscription}
+        />
+      )}
+
+      {deletingSubscription && (
+        <DeleteConfirmationModal
+          subscription={deletingSubscription}
+          onConfirm={handleConfirmDelete}
+          onClose={() => setDeletingSubscription(null)}
         />
       )}
     </Layout>

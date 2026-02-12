@@ -15,6 +15,7 @@ Nicco wants a web application (Vite + React) to track his various subscriptions 
 - [x] Delete Subscription
 - [x] **Edit Subscription** (added feature)
 - [x] **Category Management** (Standard list + Custom input)
+- [x] **Delete Confirmation** (Standard UI pattern)
 
 ### Data & Logic
 
@@ -25,28 +26,32 @@ Nicco wants a web application (Vite + React) to track his various subscriptions 
   - [x] Hybrid DatePicker (Text + Calendar)
   - [x] Optional "Next Renewal" date (for one-offs)
   - [x] Expiration Date logic
+- [x] **State Management**
+  - [x] Extracted logic to `useSubscriptions` hook
 
 ### UI/UX
 
 - [x] "System" Aesthetic (Mono fonts, strict borders, technical feel)
 - [x] Responsive Design
+- [x] Delete Confirmation Modal
 
 ## Current Status
 
 Project is functional and deployed.
 Recently completed:
 
-- Restored Calendar Picker.
-- Made "Initial Renewal" optional.
-- Fixed Category duplication bug.
-- Enforced European date format.
+- Refactored state management into `useSubscriptions` hook.
+- Added `DeleteConfirmationModal` to prevent accidental data loss.
+- Fixed lint errors and organized utility functions (`cn.ts`).
 
 ## Lessons
 
+- **State Management**: extracting complex state logic into custom hooks (like `useSubscriptions`) significantly cleans up the main component and makes testing easier.
+- **Micro-Interactions**: Adding a confirmation step for destructive actions (delete) is crucial for UX, especially on mobile where accidental taps are common.
 - **Date Inputs**: Browser `<input type="date">` is hard to style and forces locale formats. A hybrid approach (Text Input + Hidden Date Picker) works best for strict formatting + usability.
 - **Component Reuse**: `AddSubscriptionModal` handles both Create and Edit modes efficiently.
 - **Deployment**: Always check `vite.config.ts` `base` path matches the repo name for GitHub Pages.
 
 ## Executor's Feedback
 
-The application is stable. Ready for new feature requests or further UI refinements.
+The application is stable. The recent refactor improved code maintainability. Ready for deployment.
