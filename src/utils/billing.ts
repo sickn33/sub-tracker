@@ -19,6 +19,16 @@ const toLocalISOString = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const calculateCostPerMonth = (price: number, frequency: BillingFrequency): number => {
+    if (!price || price < 0) return 0;
+    switch (frequency) {
+        case 'monthly': return price;
+        case 'yearly': return price / 12;
+        case 'weekly': return (price * 52) / 12;
+        default: return price;
+    }
+};
+
 export const calculateNextBillingDate = (
   currentDate: Date,
   subscriptionDate: string,

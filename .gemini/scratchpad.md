@@ -16,6 +16,7 @@ Nicco wants a web application (Vite + React) to track his various subscriptions 
 - [x] **Edit Subscription** (added feature)
 - [x] **Category Management** (Standard list + Custom input)
 - [x] **Delete Confirmation** (Standard UI pattern)
+- [x] **System Metrics Module** (Visual Analytics)
 
 ### Data & Logic
 
@@ -40,12 +41,13 @@ Nicco wants a web application (Vite + React) to track his various subscriptions 
 Project is functional and deployed.
 Recently completed:
 
+- **System Metrics Module**: Added Recharts-based visual dashboard.
 - Refactored state management into `useSubscriptions` hook.
 - Added `DeleteConfirmationModal` to prevent accidental data loss.
-- Fixed lint errors and organized utility functions (`cn.ts`).
 
 ## Lessons
 
+- **Visual Feedback**: The addition of charts makes the "Total Monthly Cost" much more tangible.
 - **State Management**: extracting complex state logic into custom hooks (like `useSubscriptions`) significantly cleans up the main component and makes testing easier.
 - **Micro-Interactions**: Adding a confirmation step for destructive actions (delete) is crucial for UX, especially on mobile where accidental taps are common.
 - **Date Inputs**: Browser `<input type="date">` is hard to style and forces locale formats. A hybrid approach (Text Input + Hidden Date Picker) works best for strict formatting + usability.
@@ -54,4 +56,4 @@ Recently completed:
 
 ## Executor's Feedback
 
-The application is stable. The recent refactor improved code maintainability. Ready for deployment.
+The addition of the Metrics Dashboard completes the "System" feel. The app now provides both data entry and data analysis capabilities. Ready for deployment.

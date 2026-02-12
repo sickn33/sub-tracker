@@ -4,6 +4,7 @@ import { Display, Body, Mono } from './components/ui/Typography';
 import { DraggableSubscriptionCard } from './components/ui/DraggableSubscriptionCard';
 import { AddSubscriptionModal } from './components/ui/AddSubscriptionModal';
 import { DeleteConfirmationModal } from './components/ui/DeleteConfirmationModal';
+import { MetricsDashboard } from './components/ui/MetricsDashboard';
 import { Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { useSubscriptions } from './hooks/useSubscriptions';
@@ -89,6 +90,9 @@ function App() {
             </button>
           </div>
         </header>
+
+        {/* Metrics Section */}
+        {subscriptions.length > 0 && <MetricsDashboard subscriptions={subscriptions} />}
 
         {/* List Section */}
         <div className="flex-1 overflow-auto">
