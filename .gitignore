@@ -1,3 +1,4 @@
+
 # Logs
 logs
 *.log
@@ -22,3 +23,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Backups
+*backup.json
+*.json
+!package.json
+!tsconfig.json
+!tsconfig.node.json
