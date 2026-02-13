@@ -38,8 +38,8 @@ export const Body: React.FC<TypographyProps & { variant?: BodyVariant }> = ({
     switch (variant) {
       case 'lead': return 'font-body text-xl md:text-2xl font-light leading-relaxed text-ink/90';
       case 'regular': return 'font-body text-base leading-relaxed text-ink/80';
-      case 'small': return 'font-body text-sm leading-normal text-ink/60';
-      case 'caption': return 'font-body text-xs uppercase tracking-widest font-medium text-ink/40';
+      case 'small': return 'font-body text-sm leading-normal text-ink/80';
+      case 'caption': return 'font-body text-xs uppercase tracking-widest font-medium text-ink/60';
     }
   }, [variant]);
 

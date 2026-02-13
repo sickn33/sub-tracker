@@ -18,6 +18,7 @@ export const SearchBar = ({ value, onChange }: SearchBarProps) => {
         onChange={(e) => onChange(e.target.value)}
         className="block w-full pl-10 pr-3 py-2 bg-paper border border-structural text-ink placeholder-ink/40 focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all font-mono text-sm"
         placeholder="Filter subscriptions..."
+        aria-label="Filter subscriptions"
       />
     </div>
   );

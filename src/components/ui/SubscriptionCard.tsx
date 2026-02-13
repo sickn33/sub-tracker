@@ -38,7 +38,7 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
       {dragHandleProps && (
          <div 
             {...dragHandleProps}
-            className="text-ink/20 hover:text-ink cursor-grab active:cursor-grabbing p-1"
+            className="text-ink/40 hover:text-ink cursor-grab active:cursor-grabbing p-1"
          >
             <GripVertical size={20} />
          </div>
@@ -57,7 +57,7 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
                  {onEdit && (
                     <button 
                       onClick={() => onEdit({ id, name, price, frequency: cycle, nextRenewal: nextPayment, category, expirationDate })}
-                      className="md:hidden text-xs font-mono text-ink/50 hover:underline uppercase"
+                      className="md:hidden text-xs font-mono text-ink/70 hover:underline uppercase"
                     >
                       [EDIT]
                     </button>
@@ -84,12 +84,12 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
                     <Mono variant="code" className="bg-transparent text-ink/70">{formatDate(nextPayment)}</Mono>
                   </>
               ) : (
-                  <Body variant="caption" className="block mb-1 text-ink/40">No Renewal</Body>
+                  <Body variant="caption" className="block mb-1 text-ink/60">No Renewal</Body>
               )}
               
               {expirationDate && (
                 <div className="mt-2">
-                   <Body variant="caption" className="block mb-1 text-ink/50">Expires</Body>
+                   <Body variant="caption" className="block mb-1 text-ink/70">Expires</Body>
                    <Mono variant="code" className="bg-transparent text-ink/70 text-xs">{formatDate(expirationDate)}</Mono>
                 </div>
               )}
@@ -97,7 +97,7 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
            
            <div className="text-right min-w-[100px] flex flex-col items-end">
               <div className="flex items-baseline justify-end gap-1">
-                <span className="font-mono text-sm text-ink/50">{currency}</span>
+                <span className="font-mono text-sm text-ink/70">{currency}</span>
                 <Display as="span" variant="large" className="text-3xl tracking-tighter tabular-nums">
                   {price.toFixed(2)}
                 </Display>
@@ -108,7 +108,7 @@ export const SubscriptionCard: React.FC<SubscriptionProps> = ({
                    {onEdit && (
                       <button 
                         onClick={() => onEdit({ id, name, price, frequency: cycle, nextRenewal: nextPayment, category, expirationDate })}
-                        className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-ink/50 hover:text-ink uppercase"
+                        className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-ink/70 hover:text-ink uppercase"
                         title="Edit Entry"
                       >
                         [EDIT]

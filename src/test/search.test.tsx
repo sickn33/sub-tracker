@@ -11,6 +11,12 @@ describe('SearchBar', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('should have a valid aria-label', () => {
+    render(<SearchBar value="" onChange={() => {}} />);
+    const input = screen.getByLabelText('Filter subscriptions');
+    expect(input).toBeInTheDocument();
+  });
+
   it('should display the current value', () => {
     render(<SearchBar value="Netflix" onChange={() => {}} />);
     const input = screen.getByDisplayValue('Netflix');

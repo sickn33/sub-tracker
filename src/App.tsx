@@ -135,7 +135,7 @@ function App() {
           <div>
             <div className="flex items-center gap-3 mb-2">
                <Mono variant="label" className="border-signal text-signal bg-signal/5">System Active</Mono>
-               <Mono variant="code" className="text-xs text-ink/40">V 1.2.0</Mono>
+               <Mono variant="code" className="text-xs text-ink/70">V 1.2.0</Mono>
             </div>
             <Display variant="giant">SUB_TRACKER</Display>
             <Body variant="lead" className="mt-4 max-w-xl">
@@ -191,7 +191,7 @@ function App() {
         {/* List Section */}
         <div className="flex-1 overflow-auto">
           {filteredSubscriptions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-ink/40">
+            <div className="flex flex-col items-center justify-center h-64 text-ink/60">
                 <Mono variant="code" className="mb-2">NO DATA FOUND</Mono>
                 <Body variant="small">Initialize system by adding a subscription logic.</Body>
             </div>

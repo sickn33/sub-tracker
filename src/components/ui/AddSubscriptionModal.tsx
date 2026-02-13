@@ -75,7 +75,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div className="space-y-2">
                     <label htmlFor="sub-name" className="block">
-                        <Body variant="caption" className="text-ink/60">Service Identity</Body>
+                        <Body variant="caption" className="text-ink/80">Service Identity</Body>
                     </label>
                     <input 
                         id="sub-name"
@@ -89,7 +89,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
 
                 <div className="space-y-2">
                     <label htmlFor="sub-category" className="block">
-                        <Body variant="caption" className="text-ink/60">Category Classification</Body>
+                        <Body variant="caption" className="text-ink/80">Category Classification</Body>
                     </label>
                     <input 
                         id="sub-category"
@@ -114,10 +114,10 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                 <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
                          <label htmlFor="sub-price" className="block">
-                             <Body variant="caption" className="text-ink/60">Cost Impact</Body>
+                             <Body variant="caption" className="text-ink/80">Cost Impact</Body>
                          </label>
                          <div className="relative">
-                            <span className="absolute left-3 top-3 font-mono text-ink/40">{currency}</span>
+                            <span className="absolute left-3 top-3 font-mono text-ink/60">{currency}</span>
                             <input 
                                 id="sub-price"
                                 type="number"
@@ -131,7 +131,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="sub-frequency" className="block">
-                            <Body variant="caption" className="text-ink/60">Billing Cycle</Body>
+                            <Body variant="caption" className="text-ink/80">Billing Cycle</Body>
                         </label>
                         <select 
                             id="sub-frequency"
@@ -149,7 +149,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
 
                 <div className="space-y-2">
                      <label htmlFor="sub-renewal" className="block">
-                        <Body variant="caption" className="text-ink/60">Initial Renewal (Optional)</Body>
+                        <Body variant="caption" className="text-ink/80">Initial Renewal (Optional)</Body>
                      </label>
                      <DatePicker 
                         id="sub-renewal"
@@ -160,7 +160,7 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ onAd
 
                 <div className="space-y-2">
                      <label htmlFor="sub-expires" className="block">
-                        <Body variant="caption" className="text-ink/60">Expiration Date (Optional)</Body>
+                        <Body variant="caption" className="text-ink/80">Expiration Date (Optional)</Body>
                      </label>
                      <DatePicker 
                         id="sub-expires"
